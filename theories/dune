@@ -1,7 +1,14 @@
 (coq.theory
   (name Waterproof)
   (package coq-waterproof)
-  (flags :standard)
+  (flags
+  :standard
+  -w -deprecated-missing-stdlib
+  -w -notation-incompatible-prefix
+  -w -ltac2-unused-variable
+  -w -deprecated-from-Coq
+  -w -non-reference-hint
+  -w -non-reference-hint-using)
  (theories Stdlib Ltac2)
   (plugins coq-waterproof.plugin rocq-runtime.plugins.ltac rocq-runtime.plugins.ltac2))
 
