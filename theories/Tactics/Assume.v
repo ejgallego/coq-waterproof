@@ -21,12 +21,50 @@ Require Import Ltac2.Message.
 Local Ltac2 concat_list (ls : message list) : message :=
   List.fold_right concat ls (of_string "").
 
-Require Import Util.Constr.
-Require Import Util.Goals.
-Require Import Util.Hypothesis.
-Require Import Util.Init.
-Require Import Util.MessagesToUser.
-Require Import Util.TypeCorrector.
+From Ltac2 Require Import Notations.
+Require Ltac2.Array.
+Require Ltac2.Bool.
+Require Ltac2.Char.
+Require Ltac2.Constant.
+Require Ltac2.Constr.
+Require Ltac2.Constructor.
+Require Ltac2.Control.
+Require Ltac2.Env.
+Require Ltac2.Evar.
+Require Ltac2.Float.
+Require Ltac2.Fresh.
+Require Ltac2.Ident.
+Require Ltac2.Ind.
+Require Ltac2.Int.
+Require Ltac2.Lazy.
+Require Ltac2.List.
+Require Ltac2.Ltac1.
+Require Ltac2.Message.
+Require Ltac2.Meta.
+Require Ltac2.Option.
+Require Ltac2.Pattern.
+Require Ltac2.Printf.
+Require Ltac2.Proj.
+Require Ltac2.RedFlags.
+Require Ltac2.Ref.
+Require Ltac2.Std.
+Require Ltac2.String.
+Require Ltac2.Uint63.
+Require Ltac2.FSet.
+Require Ltac2.FMap.
+Require Ltac2.TransparentState.
+Require Ltac2.Unification.
+
+Print Grammar ltac2.
+
+Set Waterproof Entry.
+
+From Waterproof Require Import Util.Constr.
+From Waterproof Require Import Util.Goals.
+From Waterproof Require Import Util.Hypothesis.
+From Waterproof Require Import Util.Init.
+From Waterproof Require Import Util.MessagesToUser.
+From Waterproof Require Import Util.TypeCorrector.
 
 Require Import Waterproof.Tactics.Help.
 
@@ -154,9 +192,19 @@ Local Ltac2 assume (x : (constr * (ident option)) list) :=
 (**
   Version with type checking.
 *)
-Ltac2 Notation "Assume" "that" x(list1(seq(constr, opt(seq("(", ident, ")"))), "and")) := assume x.
+Ltac2 Notation "Assume" "that" x(list1(seq(lconstr, opt(seq("(", ident, ")"))), "and")) := assume x.
 
 (**
   Simply alternative notation for [Assume].
 *)
-Ltac2 Notation "such" "that" x(list1(seq(constr, opt(seq("(", ident, ")"))), "and")) := assume x.
+Ltac2 Notation "such" "that" x(list1(seq(lconstr, opt(seq("(", ident, ")"))), "and")) := assume x.
+
+Print Grammar waterproof.
+Print Keywords.
+Print Grammar term.
+
+Lemma foo (x y : nat) : (x < 10) -> (y < 10) -> False.
+Set Default Proof Mode "Waterproof".
+Assume that x < 10 Nat.add .
+Set Default Proof Mode "Ltac2".
+Qed.

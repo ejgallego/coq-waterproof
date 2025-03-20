@@ -22,7 +22,16 @@ DECLARE PLUGIN "coq-waterproof.plugin"
 open Exceptions
 open Waterprove
 
+open Ltac2_plugin
+open Tac2entries.Pltac
+
 let waterproof_version : string = "2.2.0+dev"
+
+let _waterproof_expr = waterproof_expr
+
+let wpmode = Procq.Entry.make "wpmode"
+
+let _ = Pvernac.register_proof_mode "Waterproof" wpmode
 
 module Ltac2Extension = struct
 
@@ -72,7 +81,25 @@ let () = add_scope "open_lconstr" (fun arg ->
 
 end
 
+let () =
+   Mltop.add_init_function "coq-waterproof.plugin" (fun () ->
+     Procq.(set_keyword_state (CLexer.add_keyword_tok (get_keyword_state ()) (Tok.PKEYWORD "Assume")));
+     Procq.(set_keyword_state (CLexer.add_keyword_tok (get_keyword_state ()) (Tok.PKEYWORD "that")));
+     Procq.(set_keyword_state (CLexer.add_keyword_tok (get_keyword_state ()) (Tok.PKEYWORD "and"))))
+
 }
+
+VERNAC ARGUMENT EXTEND waterproof_expr
+| [ _waterproof_expr(e) ] -> { e }
+END
+
+VERNAC { wpmode } EXTEND VernacLtac2
+| ![proof] [ waterproof_expr(t) ] =>
+  { Vernacextend.classify_as_proofstep } -> { fun ~pstate ->
+    let with_end_tac = false in
+    Tac2entries.call ~pstate None ~with_end_tac t
+  }
+END
 
 VERNAC COMMAND EXTEND AutomationShieldEnableSideEff CLASSIFIED AS SIDEFF
   | [ "Waterproof" "Enable" "Automation" "Shield" ] ->

@@ -230,9 +230,9 @@ Ltac2 case (t:constr) :=
       end
     | [|- _] => throw (of_string "No need to specify case.")
   end.
-
+Set Waterproof Entry.
 Ltac2 Notation "Case" t(constr) := case t.
-
+Unset Waterproof Entry.
 (**
   A goal to remind the reader to go back to an earlier
   warning

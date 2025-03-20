@@ -260,8 +260,9 @@ Ltac2 print_hints () :=
 (** * Help tactic
     Tries to give a hint how to proceed proving the current goal.
 *)
+Set Waterproof Entry.
 Ltac2 Notation "Help" := print_hints ().
-
+Unset Waterproof Entry.
 
 
 
